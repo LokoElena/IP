@@ -4,8 +4,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 /*	Func section	*/
+
+int test_prime_num(unsigned long long int p)
+{
+	unsigned long long int i = 1;
+
+	for (i = 2; i < sqrt(p); ++i) {
+	if (p % i == 0) return 0;
+	}
+	return 1;
+}
+
+unsigned long long int generate_prime_number(unsigned long long int min, unsigned long long int max)
+{
+	unsigned long int p = 1;
+	do {
+		p = (rand()) % (max - min ) + min;
+	} while (!test_prime_num(p));
+	return p;
+}
+
+void mkswap(unsigned long long int *a, unsigned long long int *b)
+{
+	unsigned long long int buff = *b;
+	*b = *a;
+	*a = buff;
+}
 
 int dectobin(unsigned long long int value)
 {
@@ -15,36 +42,23 @@ int dectobin(unsigned long long int value)
 		return (dectobin(value / 2) * 10 + value % 2);
 }
 
-void expmod_func(unsigned long long int base, unsigned long long int exponent, unsigned long long int module)
+void expmod_func(unsigned long long int base, unsigned long long int exponent, unsigned long long int module, unsigned long long int *result)
 {	
-	int cnt = 0;
-	unsigned long long int bin_exp = dectobin(exponent);
-	unsigned long long int bin_res[100];
-	int res_arr[100];
-	while (bin_exp > 0)
-	{
-		bin_res[cnt] = bin_exp % 10;
-		bin_exp /= 10;
-
-		if (cnt == 0)
-			res_arr[cnt] = base;
-		else
-			res_arr[cnt] = res_arr[cnt - 1] * res_arr[cnt - 1];
-		res_arr[cnt] %= module;
-		cnt++;
+	*result = 1;
+	while (exponent) {
+		if (exponent & 0x1) {
+			*result = (*result * base) % module;
+		}
+		base = (base * base) % module;
+		exponent = exponent >> 1;
 	}
-
-	int result = 1;
-	for (int i = 0; i < cnt; i++)
-	{
-		res_arr[i] = pow(res_arr[i], bin_res[i]);
-		result *= res_arr[i];
-	}
-	printf("FEM's result:\t%lld\n", result % module);
+	*result = *result % module;
 }
 
 void euclid(unsigned long long int a, unsigned long long int b, unsigned long long int *res)
 {
+	if (a < b) mkswap(&a, &b);
+
 	long int U[2] = {1, 0};
 	long int V[2] = {0, 1};
 	long int T[2];
@@ -72,6 +86,28 @@ void euclid(unsigned long long int a, unsigned long long int b, unsigned long lo
 	res[2] = a;
 }
 
+void diffyhellman(unsigned long long int* K1, unsigned long long int* K2)
+{
+	srand(time(NULL));
+	unsigned long long int g = generate_prime_number(1, 1000);//4200;
+	unsigned long long int p;
+
+	p = generate_prime_number(1, 1000);//3571;
+	unsigned long long int KeyA = 0, KeyB = 0;
+	unsigned long long int a, b;
+	unsigned long long int Ka, Kb;
+
+	a = rand() % (1000000 - 10000) + 10000;//187653288;
+	expmod_func(g, a, p, &KeyA);
+	b = rand() % (1000000 - 10000) + 10000;// 987701673;
+	expmod_func(g, b, p, &KeyB);
+        printf ("g %lld, p % lld, a %lld, b %lld, A %lld B %lld\n",g,p,a,b, KeyA, KeyB);
+	expmod_func(KeyB, a, p, &Ka);
+	expmod_func(KeyA, b, p, &Kb);
+	*K1 = Ka;
+	*K2 = Kb;
+}
+
 /*	Main section	*/
 
 int main(int argc, char const *argv[])
@@ -87,13 +123,22 @@ int main(int argc, char const *argv[])
 	unsigned long long int base = atoi(argv[1]);
 	unsigned long long int exponent = atoi(argv[2]);
 	unsigned long long int module = atoi(argv[3]);
+	unsigned long long int fem_res = 1;
+
 	unsigned long long int euclid_a = atoi(argv[4]);
 	unsigned long long int euclid_b = atoi(argv[5]);
-	unsigned long long int euclid_res[2];
+	unsigned long long int euclid_res[3];
 
-	expmod_func(base, exponent, module);
+	unsigned long long int KeyA = 5;
+	unsigned long long int KeyB = 5;
+
+	expmod_func(base, exponent, module, &fem_res);
 	euclid(euclid_a, euclid_b, euclid_res);
+	diffyhellman(&KeyA, &KeyB);
+
+	printf("FEM's result:\t%lld\n", fem_res);
 	printf("GEA's result:\t%lld, %lld and their GCD: %lld\n", euclid_res[0], euclid_res[1], euclid_res[2]);
+	printf("DH's result:\t%lld = %lld\n", KeyA, KeyB);
 
 	return EXIT_SUCCESS;
 }
