@@ -1,4 +1,4 @@
-#include "hashtab.h"
+#include "../include/hashtab.h"
 
 unsigned int hashtab_hash(int key)
 {
