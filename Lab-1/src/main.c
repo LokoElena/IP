@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	}
 
 	expmod_func(fem_base, fem_exponent, fem_module, &fem_res);
-	euclid(euclid_a, euclid_b, euclid_res);
+	euclid_a > euclid_b ? euclid(abs(euclid_a), abs(euclid_b), euclid_res) : euclid(abs(euclid_b), abs(euclid_a), euclid_res);
 	diffyhellman(&KeyA, &KeyB);
 	babygiant_steps(bgs_base, bgs_module, bgs_answer, &bgs_res);
 

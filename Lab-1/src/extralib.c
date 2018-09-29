@@ -17,13 +17,25 @@ int test_prime_num(unsigned long long int p)
 	return 1;
 }
 
-unsigned long long int generate_prime_number(unsigned long long int min, unsigned long long int max)
+void generate_prime_number(unsigned long long int min, unsigned long long int max, unsigned long long int *p)
 {
-	unsigned long int p = 1;
+	*p = 1;
 	do {
-		p = (rand()) % (max - min ) + min;
-	} while (!test_prime_num(p));
-	return p;
+		*p = (rand()) % (max - min ) + min;
+	} while (!test_prime_num(*p));
+}
+
+void generate_primitive_root(unsigned long long int	p, unsigned long long *g)
+{
+	unsigned long long int q = (p - 1) / 2;
+	unsigned long long int res = 1;
+	for (int i = 2; i < (p - 1); ++i) {
+		expmod_func(i, q, p, &res);
+		if (res != 1) {
+			*g = i;
+			return;
+		}
+	}
 }
 
 void mkswap(unsigned long long int *a, unsigned long long int *b)

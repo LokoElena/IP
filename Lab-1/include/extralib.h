@@ -10,7 +10,8 @@
 
 double wtime();
 int test_prime_num(unsigned long long int p);
-unsigned long long int generate_prime_number(unsigned long long int min, unsigned long long int max);
+void generate_prime_number(unsigned long long int min, unsigned long long int max, unsigned long long int *p);
 void mkswap(unsigned long long int *a, unsigned long long int *b);
+void generate_primitive_root(unsigned long long int	p, unsigned long long *g);
 
 #endif

@@ -19,16 +19,13 @@ void expmod_func(unsigned long long int base, unsigned long long int exponent, u
 
 void euclid(unsigned long long int a, unsigned long long int b, unsigned long long int *res)
 {
-	if (a < b) mkswap(&a, &b);
-
 	long int U[2] = {1, 0};
 	long int V[2] = {0, 1};
 	long int T[2];
 	long int buff;
-	double q = a / b;
 
-	while (b > 0)
-	{
+	while (b > 0) {
+		double q = a / b;
 		T[0] = U[0] - q * U[1];
 		T[1] = V[0] - q * V[1];
 
@@ -51,12 +48,14 @@ void euclid(unsigned long long int a, unsigned long long int b, unsigned long lo
 void diffyhellman(unsigned long long int *K1, unsigned long long int *K2)
 {
 	srand(time(NULL));
-	unsigned long long int g = generate_prime_number(1, 1000);
 	unsigned long long int p;
+	unsigned long long int g;
 
-	p = generate_prime_number(1, 1000);
-	unsigned long long int KeyA = 0, KeyB = 0;
+	generate_prime_number(1, 1000, &p);
+	generate_primitive_root(p, &g);
+	
 	unsigned long long int a, b;
+	unsigned long long int KeyA = 0, KeyB = 0;
 
 	a = rand() % (1000000 - 10000) + 10000;
 	expmod_func(g, a, p, &KeyA);
