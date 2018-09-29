@@ -49,9 +49,16 @@ void diffyhellman(unsigned long long int *K1, unsigned long long int *K2)
 {
 	srand(time(NULL));
 	unsigned long long int p;
+	unsigned long long int q;
 	unsigned long long int g;
 
-	generate_prime_number(1, 1000, &p);
+	generate_prime_number(1, 1000, &q);
+	p = 2 * q + 1;
+
+	while (test_prime_num(p)) {
+		generate_prime_number(1, 1000, &q);
+		p = 2 * q - 1;
+	}
 	generate_primitive_root(p, &g);
 	
 	unsigned long long int a, b;

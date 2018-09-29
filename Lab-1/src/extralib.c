@@ -37,10 +37,3 @@ void generate_primitive_root(unsigned long long int	p, unsigned long long *g)
 		}
 	}
 }
-
-void mkswap(unsigned long long int *a, unsigned long long int *b)
-{
-	unsigned long long int buff = *b;
-	*b = *a;
-	*a = buff;
-}
