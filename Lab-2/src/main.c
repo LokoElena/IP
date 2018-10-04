@@ -8,17 +8,18 @@
 #include <unistd.h>
 
 #include "../include/encryptolib.h"
+#include "../include/cryptolib.h"
 #include "../include/extralib.h"
+#include "../include/hashtab.h"
 
 int main(int argc, char *argv[])
 {
-  printf("VE's result:\t%ld\n", vernam_encode("./vernam.txt", "./vernam_code.txt", "./vernam_key.txt"));
-  printf("VD's result:\t%ld\n", vernam_decode("./vernam_code.txt", "./vernam_res.txt", "./vernam_key.txt"));
+  printf("VE's result:\t%ld\n", vernam_encode("./vernam.txt"));
+  printf("VD's result:\t%ld\n", vernam_decode("./vernam.txt.encode"));
 
-  //printf("\n");
-  //rsa_generate();
-  //printf("rsa_encode return %ld\n", rsa_encode("./rsa.txt", "./rsa_code.txt"));
-  //printf("rsa_decode return %ld\n", rsa_decode("./rsa_code.txt", "./rsa_res.txt"));
+  rsa_generate();
+  printf("RSA encode result:\t%ld\n", rsa_encode("./rsa.txt"));
+  printf("RSA decode result:\t%ld\n", rsa_decode("./rsa.txt.encode"));
 
   return EXIT_SUCCESS;
 }
