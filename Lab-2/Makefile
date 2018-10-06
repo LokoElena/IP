@@ -37,11 +37,3 @@ clean:
 exec:
 	make
 	./bin/cmpl
-
-show:
-	make exec
-	clear
-	echo "Vernam's results:"
-	cat vernam.txt vernam.txt.encode.rsa_decode
-	echo "RSA results:"
-	cat rsa.txt rsa.txt.encode.rsa_decode
