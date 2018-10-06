@@ -3,7 +3,8 @@
 #include "../include/cryptolib.h"
 #include "../include/hashtab.h"
 
-long int vernam_encode(char* input_file) {
+long int vernam_encode(char* input_file)
+{
   int fd_input, fd_output;
   char c = '\0';
   char key = 0;
@@ -48,7 +49,8 @@ long int vernam_encode(char* input_file) {
   return k;
 }
 
-long int vernam_decode(char* input_file) {
+long int vernam_decode(char* input_file)
+{
   int fd_input, fd_output;
   char c = '\0';
   char out[256] = {0};
@@ -93,11 +95,12 @@ int rsa_generate() {
 
   if ((fd_public = open("./.keyrsa.pub",  O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
     printf("[ERROR] Can't open file .keyrsa.pub\n");
+    closefiles(1, fd_public);
     return -1;
   }
   if ((fd_private = open("./.keyrsa",  O_WRONLY | O_CREAT | O_TRUNC, 0600)) == -1) {
     printf("[ERROR] Can't open file .keyrsa\n");
-    closefiles(1, fd_public);
+    closefiles(1, fd_private);
     return -1;
   }
   unsigned long long int gcd = 0;
@@ -125,7 +128,8 @@ int rsa_generate() {
   return 0;
 }
 
-long int rsa_encode(char* input_file) {
+long int rsa_encode(char* input_file)
+{
   int fd_input, fd_output, fd_key;
   unsigned long int pubkey_e = 0, pubkey_n = 0;
   unsigned long long int c = '\0';
@@ -172,7 +176,8 @@ long int rsa_encode(char* input_file) {
   return k;
 }
 
-long int rsa_decode(char* input_file) {
+long int rsa_decode(char* input_file)
+{
   int fd_input, fd_output, fd_key;
   unsigned long int privkey_d, privkey_n;
   unsigned long long int c = '\0';
@@ -216,4 +221,96 @@ long int rsa_decode(char* input_file) {
   }
   closefiles(3, fd_input, fd_output, fd_key);
   return k;
+}
+
+// long int shamir_encode(char* input_file)
+// {
+//   char c = '\0';
+//   char key = 0;
+//   char *keystr = malloc(sizeof(char));
+//   char *keych = malloc(sizeof(char));
+//   char out[256] = {0};
+//   strcat(out, input_file);
+//   strcat(out, ".encode");
+//   long int k = 0;
+//   long int ki = 0;
+//   char cipherstr[7] = "shamir";
+//   srand(time(NULL));
+//   int fd_input, fd_output;
+//   if ((fd_input =  open(input_file, O_RDONLY)) == -1) {
+//     printf("[ERROR] Can't open file %s\n", input_file);
+//     return -1;
+//   }
+//   if ((fd_output = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
+//     printf("[ERROR] Can't open file %s\n", out);
+//     closefiles(1, fd_input);
+//     return -1;
+//   }
+//
+//   return 0;
+// }
+//
+// long int shamir_decode(char* input_file)
+// {
+//   return 0;
+// }
+
+int elgamal_generate()
+{
+  unsigned long long int p, g, x, y;
+  int fd_public, fd_private;
+
+  if ((fd_public = open("./.keyelgamal.pub",  O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
+    printf("[ERROR] Can't open file .keyelgamal.pub\n");
+    closefiles(1, fd_public);
+    return -1;
+  }
+  if ((fd_private = open("./.keyelgamal",  O_WRONLY | O_CREAT | O_TRUNC, 0600)) == -1) {
+    printf("[ERROR] Can't open file .keyelgamal\n");
+    closefiles(1, fd_private);
+    return -1;
+  }
+
+  generate_prime_number(1, MAXINT, &p);
+  generate_prime_number(1, p - 1, &x);
+  generate_primitive_root(p, &g);
+  expmod_func(g, x, p, &y);
+
+  write(fd_public, &y, sizeof(y));
+  write(fd_private, &x, sizeof(x));
+
+  closefiles(2, fd_public, fd_private);
+  return 0;
+}
+
+long int elgamal_encode(char* input_file)
+{
+  int fd_input, fd_output;
+  char c = '\0';
+  char key = 0;
+  char *keystr = malloc(sizeof(char));
+  char *keych = malloc(sizeof(char));
+  char out[256] = {0};
+  strcat(out, input_file);
+  strcat(out, ".encode");
+  long int k = 0;
+  long int ki = 0;
+  char cipherstr[7] = "elgamal";
+  srand(time(NULL));
+  if ((fd_input =  open(input_file, O_RDONLY)) == -1) {
+    printf("[ERROR] Can't open file %s\n", input_file);
+    return -1;
+  }
+  if ((fd_output = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
+    printf("[ERROR] Can't open file %s\n", out);
+    closefiles(1, fd_input);
+    return -1;
+  }
+
+  return 0;
+}
+
+long int elgamal_decode(char* input_file)
+{
+  return 0;
 }
