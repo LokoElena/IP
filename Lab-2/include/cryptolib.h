@@ -12,6 +12,5 @@ void expmod_func(unsigned long long int base, unsigned long long int exponent, u
 void euclid(unsigned long long int a, unsigned long long int b, unsigned long long int *res);
 void diffyhellman(unsigned long long int *K1, unsigned long long int *K2);
 void babygiant_steps(long long base, long long module, long long answer, unsigned long long int *x);
-void euclid_with_roots(long int a, long int b, long int* x, long int *y, long int* nod);
 
 #endif

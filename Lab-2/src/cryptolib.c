@@ -18,32 +18,6 @@ void expmod_func(unsigned long long int base, unsigned long long int exponent, u
 	*result = *result % module;
 }
 
-void euclid_with_roots(long int a, long int b, long int* x, long int *y, long int* nod)
-{
-  long int Ux = a, Uy = 1, Uz= 0;
-  long int Vx = b, Vy = 0, Vz = 1;
-  long int Tempx, Tempy, Tempz;
-  long int tmp;
-
-  while (Vx != 0) {
-    tmp = Ux / Vx;
-    Tempx = Ux % Vx;
-    Tempy = Uy - tmp * Vy;
-    Tempz = Uz - tmp * Vz;
-    Ux = Vx;
-    Uy = Vy;
-    Uz = Vz;
-
-    Vx = Tempx;
-    Vy = Tempy;
-    Vz = Tempz;
-  }
-
-  if (x != NULL) *x = Uy;
-  if (y != NULL) *y = Uz;
-  if (nod != NULL) *nod = Ux;
-}
-
 void euclid(unsigned long long int a, unsigned long long int b, unsigned long long int *res)
 {
 	long int U[2] = {1, 0};

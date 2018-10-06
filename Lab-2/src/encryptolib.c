@@ -87,8 +87,8 @@ long int vernam_decode(char* input_file) {
 
 int rsa_generate() {
   unsigned long long int p, q, e;
-  long int eiler_res;
-  unsigned long int d, n;
+  unsigned long long int eiler_res;
+  unsigned long long int d, n;
   int fd_public, fd_private;
 
   if ((fd_public = open("./.keyrsa.pub",  O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
@@ -100,17 +100,21 @@ int rsa_generate() {
     closefiles(1, fd_public);
     return -1;
   }
-  long int nod = 0;
-  while (nod != 1 || test_prime_num(d) == 0 || d > 0xFFFF) {
+  unsigned long long int gcd = 0;
+  unsigned long long int euclid_res[3];
+  while (gcd != 1 || test_prime_num(d) == 0 || d > 0xFFFF) {
     do {
       generate_prime_number(1, MAXINT, &p);
       generate_prime_number(1, MAXINT, &q);
     } while (p == q);
     n = p * q;
     eiler_res = (p - 1) * (q - 1);
-    e = generate_prime_too_number(eiler_res, 1, eiler_res);
+    e = generate_mutually_prime_number(eiler_res, 1, eiler_res);
 
-    euclid_with_roots(e, eiler_res, &d, NULL, &nod);
+    //euclid_with_roots(e, eiler_res, &d, NULL, &gcd);
+    euclid(e, eiler_res, euclid_res);
+    d = euclid_res[0];
+    gcd = euclid_res[2];
     d = d % eiler_res;
   }
   write(fd_public, &e, sizeof(e));

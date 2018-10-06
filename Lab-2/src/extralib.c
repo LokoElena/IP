@@ -52,20 +52,21 @@ void generate_primitive_root(unsigned long long int	p, unsigned long long *g)
 	}
 }
 
-int test_prime_too_num(long int p, long int e) {
-  int i = 1;
-  unsigned long int x, y, nod;
+int test_mutually_prime_num(unsigned long long int p, unsigned long long int e)
+{
+  unsigned long long int euclid_res[3];
   if (p == e) return 0;
   if (p % e == 0) return 0;
-  euclid_with_roots(p, e, &x, &y, &nod);
-  if (nod != 1) return 0;
+  euclid(p, e, euclid_res);
+  if (euclid_res[2] != 1) return 0;
   return 1;
 }
 
-long int generate_prime_too_number(long int e, long int min, long int max) {
+long int generate_mutually_prime_number(unsigned long long int e, unsigned long long int min, unsigned long long int max)
+{
     long int p = 1;
     do {
         p = (rand()) % (max - min) + min;
-    } while (!test_prime_too_num(e, p));
+    } while (!test_mutually_prime_num(e, p));
     return p;
 }
