@@ -87,7 +87,8 @@ long int vernam_decode(char* input_file)
   return k;
 }
 
-int rsa_generate() {
+int rsa_generate()
+{
   unsigned long long int p, q, e;
   unsigned long long int eiler_res;
   unsigned long long int d, n;
@@ -278,6 +279,7 @@ int elgamal_generate()
   write(fd_private, &x, sizeof(x));
   write(fd_private, &p, sizeof(p));
   write(fd_private, &g, sizeof(g));
+  //printf("GENERATED: X = %llu, Y = %llu, P = %llu, G = %llu\n", x, y, p , g);
 
   closefiles(2, fd_public, fd_private);
   return 0;
@@ -308,7 +310,7 @@ long int elgamal_encode(char* input_file)
     closefiles(1, fd_input);
     return -1;
   }
-  if ((fd_key = open(".keyrsa.pub", O_RDONLY)) == -1) {
+  if ((fd_key = open(".keyelgamal.pub", O_RDONLY)) == -1) {
     printf("[ERROR] Can't open file %s\n", out);
     closefiles(2, fd_input, fd_output);
     return -1;
@@ -316,7 +318,7 @@ long int elgamal_encode(char* input_file)
   read(fd_key, &pubkey, sizeof(unsigned long long int));
   read(fd_key, &p, sizeof(unsigned long long int));
   read(fd_key, &g, sizeof(unsigned long long int));
-
+  //printf("ENCODED WITH: Y = %llu, P = %llu, G = %llu\n", pubkey, p , g);
   generate_prime_number(1, p - 1, &sessionkey);
   while (read(fd_input, &c, sizeof(char)) != 0) {
     expmod_func(g, sessionkey, p, &a);
@@ -331,7 +333,7 @@ long int elgamal_encode(char* input_file)
   }
 
   write(fd_output, &key, sizeof(char));
-  write(fd_output, cipherstr, 7 * sizeof(char));
+  write(fd_output, cipherstr, 8 * sizeof(char));
 
   for (k = 0; k < ki; ++k) {
     write(fd_output, &keystr_a[k], sizeof(long int));
@@ -352,7 +354,7 @@ long int elgamal_decode(char* input_file)
   char *keystr = malloc(sizeof(char));
   long int k = 0;
   long int ki = 0;
-  char cipherstr[8] = "elgamal";
+  char cipherstr[7] = "elgamal";
   char out[256] = {0};
   strcat(out, input_file);
   strcat(out, ".decode");
@@ -374,7 +376,7 @@ long int elgamal_decode(char* input_file)
   read(fd_key, &privkey_x, sizeof(unsigned long long int));
   read(fd_key, &privkey_p, sizeof(unsigned long long int));
   read(fd_key, &privkey_g, sizeof(unsigned long long int));
-
+  //printf("DECODED WITH: X = %llu, P = %llu, G = %llu\n", privkey_x, privkey_p , privkey_g);
   if (read(fd_input, cipherstr, 9 * sizeof(char)) == 0) return 0;
   while (read(fd_input, &stream_a, sizeof(long int)) != 0) {
     read(fd_input, &stream_b, sizeof(long int));
