@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   printf("VE result:\t%ld\n", vernam_encode("./vernam.txt"));
   printf("VD result:\t%ld\n", vernam_decode("./vernam.txt.encode"));
 
-  rsa_generate();
+  //rsa_generate();
   printf("RSA encode result:\t%ld\n", rsa_encode("./rsa.txt"));
   printf("RSA decode result:\t%ld\n", rsa_decode("./rsa.txt.encode"));
 
