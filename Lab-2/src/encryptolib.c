@@ -378,7 +378,7 @@ long int elgamal_decode(char* input_file)
   if (read(fd_input, cipherstr, 9 * sizeof(char)) == 0) return 0;
   while (read(fd_input, &stream_a, sizeof(long int)) != 0) {
     read(fd_input, &stream_b, sizeof(long int));
-    expmod_func(stream_a, -privkey_x, privkey_p, &encode_message);
+    expmod_func(stream_a, privkey_p - 1 - privkey_x, privkey_p, &encode_message);
     encode_message *= stream_b;
     keystr[ki] = encode_message;
     ++ki;
