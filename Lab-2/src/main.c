@@ -21,8 +21,10 @@ int main(int argc, char *argv[])
   printf("RSA encode result:\t%ld\n", rsa_encode("./rsa.txt"));
   printf("RSA decode result:\t%ld\n", rsa_decode("./rsa.txt.encode"));
 
-  //printf("SE result:\t%ld\n", shamir_encode("./shamir.txt"));
-  //printf("SD result:\t%ld\n", shamir_decode("./shamir.txt.encode"));
+  if (!shamir_cipher("./shamir.txt"))
+    printf("SED result:\t[SUCCESS]\n");
+  else
+    printf("SED result:\t[FAILED]\n");
 
   elgamal_generate();
   printf("EGE result:\t%ld\n", elgamal_encode("./elgamal.txt"));

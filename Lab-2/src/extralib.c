@@ -70,3 +70,8 @@ long int generate_mutually_prime_number(unsigned long long int e, unsigned long 
     } while (!test_mutually_prime_num(e, p));
     return p;
 }
+
+void generate_d(unsigned long long int c, unsigned long long int p, unsigned long long int *d)
+{
+  while (((c * *d) % (p - 1)) != 1)  *d = 1 + rand() % 1000; 
+}

@@ -19,8 +19,8 @@ int rsa_generate();
 long int rsa_encode(char* input_file);
 long int rsa_decode(char* input_file);
 
-long int shamir_encode(char* input_file);
-long int shamir_decode(char* input_file);
+int shamir_cipher(char* input_file);
+void shamir_generate(unsigned long long int* p, unsigned long long int* c, unsigned long long int* d);
 
 int elgamal_generate();
 long int elgamal_encode(char* input_file);

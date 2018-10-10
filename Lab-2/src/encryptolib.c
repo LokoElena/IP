@@ -221,37 +221,45 @@ long int rsa_decode(char* input_file)
   return k;
 }
 
-// long int shamir_encode(char* input_file)
-// {
-//   char c = '\0';
-//   char key = 0;
-//   char *keystr = malloc(sizeof(char));
-//   char *keych = malloc(sizeof(char));
-//   char out[256] = {0};
-//   strcat(out, input_file);
-//   strcat(out, ".encode");
-//   long int k = 0;
-//   long int ki = 0;
-//   char cipherstr[7] = "shamir";
-//   srand(time(NULL));
-//   int fd_input, fd_output;
-//   if ((fd_input =  open(input_file, O_RDONLY)) == -1) {
-//     printf("[ERROR] Can't open file %s\n", input_file);
-//     return -1;
-//   }
-//   if ((fd_output = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
-//     printf("[ERROR] Can't open file %s\n", out);
-//     closefiles(1, fd_input);
-//     return -1;
-//   }
-//
-//   return 0;
-// }
-//
-// long int shamir_decode(char* input_file)
-// {
-//   return 0;
-// }
+int shamir_cipher(char* input_file)
+{
+  unsigned long long int message = 10, p, c[2], d[2], x[2];
+  int fd_encoder, fd_decoder;
+
+  shamir_generate(&p, c, d);
+  expmod_func(message, c[0], p, &x[0]);
+  expmod_func(x[0], c[1], p, &x[1]);
+  expmod_func(x[1], d[0], p, &x[0]);
+  expmod_func(x[0], d[1], p, &x[1]);
+
+  if ((fd_encoder = open("./shamir.txt.encode",  O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1) {
+    printf("[ERROR] Can't open file shamir.txt.encode\n");
+    return -1;
+  }
+  if ((fd_decoder = open("./shamir.txt.encode.decode",  O_WRONLY | O_CREAT | O_TRUNC, 0600)) == -1) {
+    printf("[ERROR] Can't open file shamir.txt.encode.decode\n");
+    closefiles(1, fd_encoder);
+    return -1;
+  }
+
+  write(fd_encoder, &x[0], sizeof(unsigned long long int));
+  write(fd_decoder, &x[1], sizeof(char));
+
+  if (message != x[1]) return -1;
+  return 0;
+}
+
+void shamir_generate(unsigned long long int* p, unsigned long long int* c, unsigned long long int* d)
+{
+  unsigned long long int euclid_res[3];
+  generate_prime_number(1, MAXINT, &*p);
+  c[0] = generate_mutually_prime_number(*p - 1, 1, *p - 1);
+  c[1] = generate_mutually_prime_number(*p - 1, 1, *p - 1);
+  euclid(*p - 1, c[0], euclid_res);
+  d[0] = euclid_res[1];
+  euclid(*p - 1, c[1], euclid_res);
+  d[1] = euclid_res[1];
+}
 
 int elgamal_generate()
 {
