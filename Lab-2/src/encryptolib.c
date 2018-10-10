@@ -268,7 +268,7 @@ int elgamal_generate()
     return -1;
   }
 
-  generate_prime_number(1, MAXINT, &p);
+  generate_prime_number(255, 800, &p);
   generate_prime_number(1, p - 1, &x);
   generate_primitive_root(p, &g);
   expmod_func(g, x, p, &y);
@@ -299,7 +299,7 @@ long int elgamal_encode(char* input_file)
   long int ki = 0;
   unsigned long long int p, g, a = 1, b = 1;
   unsigned long long int pubkey = 0, sessionkey = 0;
-  char cipherstr[7] = "elgamal";
+  char cipherstr[9] = "elgamal";
   srand(time(NULL));
   if ((fd_input =  open(input_file, O_RDONLY)) == -1) {
     printf("[ERROR] Can't open file %s\n", input_file);
@@ -335,7 +335,7 @@ long int elgamal_encode(char* input_file)
   }
 
   write(fd_output, &key, sizeof(char));
-  write(fd_output, cipherstr, 8 * sizeof(char));
+  write(fd_output, cipherstr, 7 * sizeof(char));
 
   for (k = 0; k < ki; ++k) {
     write(fd_output, &keystr_a[k], sizeof(unsigned long long int));
@@ -383,11 +383,10 @@ long int elgamal_decode(char* input_file)
   while (read(fd_input, &stream_a, sizeof(unsigned long long int)) != 0) {
     read(fd_input, &stream_b, sizeof(unsigned long long int));
     expmod_func(stream_a, privkey_p - 1 - privkey_x, privkey_p, &encode_message);
-    encode_message = (encode_message % privkey_p) * (stream_b * privkey_p);
+    encode_message = ((encode_message % privkey_p) * (stream_b % privkey_p)) % privkey_p;
     keystr[ki] = encode_message;
     ++ki;
     keystr = realloc(keystr, sizeof(char) * (ki + 1));
-    printf("%c\n", keystr[ki]);
     ++k;
   }
 

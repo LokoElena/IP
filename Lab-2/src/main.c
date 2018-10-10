@@ -28,5 +28,7 @@ int main(int argc, char *argv[])
   printf("EGE result:\t%ld\n", elgamal_encode("./elgamal.txt"));
   printf("EGD result:\t%ld\n", elgamal_decode("./elgamal.txt.encode"));
 
+  //cleanup();
+
   return EXIT_SUCCESS;
 }
