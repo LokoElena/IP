@@ -323,7 +323,7 @@ long int elgamal_encode(char* input_file)
   while (read(fd_input, &c, sizeof(char)) != 0) {
     expmod_func(g, sessionkey, p, &a);
     expmod_func(pubkey, sessionkey, p, &b);
-    b *= c;
+    b = (b % p) * (c % p);
     keystr_a[ki] = a;
     keystr_b[ki] = b;
     ++ki;
@@ -379,11 +379,11 @@ long int elgamal_decode(char* input_file)
   read(fd_key, &privkey_p, sizeof(unsigned long long int));
   read(fd_key, &privkey_g, sizeof(unsigned long long int));
 
-  if (read(fd_input, cipherstr, 9 * sizeof(char)) == 0) return 0;
+  if (read(fd_input, cipherstr, 8 * sizeof(char)) == 0) return 0;
   while (read(fd_input, &stream_a, sizeof(unsigned long long int)) != 0) {
     read(fd_input, &stream_b, sizeof(unsigned long long int));
     expmod_func(stream_a, privkey_p - 1 - privkey_x, privkey_p, &encode_message);
-    encode_message *= stream_b;
+    encode_message = (encode_message % privkey_p) * (stream_b * privkey_p);
     keystr[ki] = encode_message;
     ++ki;
     keystr = realloc(keystr, sizeof(char) * (ki + 1));
