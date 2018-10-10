@@ -290,8 +290,8 @@ long int elgamal_encode(char* input_file)
   int fd_input, fd_output, fd_key;
   char c = '\0';
   char key = 0;
-  char *keystr_a = malloc(sizeof(char));
-  char *keystr_b = malloc(sizeof(char));
+  unsigned long long int *keystr_a = malloc(sizeof(unsigned long long int));
+  unsigned long long int *keystr_b = malloc(sizeof(unsigned long long int));
   char out[256] = {0};
   strcat(out, input_file);
   strcat(out, ".encode");
@@ -329,6 +329,8 @@ long int elgamal_encode(char* input_file)
     ++ki;
     keystr_a = realloc(keystr_a, sizeof(unsigned long long int) * (ki + 1));
     keystr_b = realloc(keystr_b, sizeof(unsigned long long int) * (ki + 1));
+    a = 0;
+    b = 0;
     c = 0;
   }
 
@@ -336,8 +338,8 @@ long int elgamal_encode(char* input_file)
   write(fd_output, cipherstr, 8 * sizeof(char));
 
   for (k = 0; k < ki; ++k) {
-    write(fd_output, &keystr_a[k], sizeof(long int));
-    write(fd_output, &keystr_b[k], sizeof(long int));
+    write(fd_output, &keystr_a[k], sizeof(unsigned long long int));
+    write(fd_output, &keystr_b[k], sizeof(unsigned long long int));
   }
   closefiles(3, fd_input, fd_output, fd_key);
 
@@ -376,15 +378,16 @@ long int elgamal_decode(char* input_file)
   read(fd_key, &privkey_x, sizeof(unsigned long long int));
   read(fd_key, &privkey_p, sizeof(unsigned long long int));
   read(fd_key, &privkey_g, sizeof(unsigned long long int));
-  //printf("DECODED WITH: X = %llu, P = %llu, G = %llu\n", privkey_x, privkey_p , privkey_g);
+
   if (read(fd_input, cipherstr, 9 * sizeof(char)) == 0) return 0;
-  while (read(fd_input, &stream_a, sizeof(long int)) != 0) {
-    read(fd_input, &stream_b, sizeof(long int));
+  while (read(fd_input, &stream_a, sizeof(unsigned long long int)) != 0) {
+    read(fd_input, &stream_b, sizeof(unsigned long long int));
     expmod_func(stream_a, privkey_p - 1 - privkey_x, privkey_p, &encode_message);
     encode_message *= stream_b;
     keystr[ki] = encode_message;
     ++ki;
     keystr = realloc(keystr, sizeof(char) * (ki + 1));
+    printf("%c\n", keystr[ki]);
     ++k;
   }
 
