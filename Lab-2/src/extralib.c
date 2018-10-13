@@ -71,7 +71,32 @@ long int generate_mutually_prime_number(unsigned long long int e, unsigned long 
     return p;
 }
 
-void generate_d(unsigned long long int c, unsigned long long int p, unsigned long long int *d)
+void cleanup()
 {
-  while (((c * *d) % (p - 1)) != 1)  *d = 1 + rand() % 1000; 
+  printf("\nCleaning current directory from extra files...\n");
+  char* name[4] = {"vernam.", "shamir.", "elgamal.", "rsa."};
+  char* type[2] = {"txt.", "jpg."};
+  char* state[2] = {"encode", "encode.decode"};
+  char file[255];
+  char file_buff_type[255];
+  char file_buff_state[255];
+
+  for (int i = 0; i < 4; ++i) {
+    strcat(file, name[i]);
+
+    for (int j = 0; j < 2; ++j) {
+      strcpy(file_buff_type, file);
+      strcat(file, type[j]);
+
+      for (int k = 0; k < 2; k++) {
+        strcpy(file_buff_state, file);
+
+        strcat(file, state[k]);
+        remove(file);
+        strcpy(file, file_buff_state);
+      }
+      strcpy(file, file_buff_type);
+    }
+    *file = 0;
+  }
 }

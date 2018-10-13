@@ -281,13 +281,15 @@ int shamir_cipher(char* input_file)
 void shamir_generate(unsigned long long int* p, unsigned long long int* c, unsigned long long int* d)
 {
   unsigned long long int euclid_res[3];
-  generate_prime_number(1, MAXINT, &*p);
+  generate_prime_number(1, MAXINT, p);
+  do {
   c[0] = generate_mutually_prime_number(*p - 1, 1, *p - 1);
   c[1] = generate_mutually_prime_number(*p - 1, 1, *p - 1);
   euclid(*p - 1, c[0], euclid_res);
   d[0] = euclid_res[1];
   euclid(*p - 1, c[1], euclid_res);
   d[1] = euclid_res[1];
+  } while (d[0] > 0xFFFFFF || d[1] > 0xFFFFFF);
 }
 
 int elgamal_generate()

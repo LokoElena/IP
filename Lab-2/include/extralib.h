@@ -18,6 +18,6 @@ void generate_prime_number(unsigned long long int min, unsigned long long int ma
 void generate_primitive_root(unsigned long long int	p, unsigned long long *g);
 int test_mutually_prime_number(unsigned long long int p, unsigned long long int e);
 long int generate_mutually_prime_number(unsigned long long int e, unsigned long long int min, unsigned long long int max);
-void generate_d(unsigned long long int c, unsigned long long int p, unsigned long long int *d);
+void cleanup();
 
 #endif

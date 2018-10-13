@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
   else
     printf("RSA E/D result:\t[FAILED]\n");
 
-  //cleanup();
+  cleanup();
+
   return EXIT_SUCCESS;
 }
