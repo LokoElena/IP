@@ -23,9 +23,9 @@ int hashMD5(FILE* fd_input, MD5_CTX *md5handler)
 
 int RSA_sgn(char* input_file)
 {
-  unsigned long long int p, q, e;
+  unsigned long long int p, q, e, key_check = 0, s;
   unsigned long long int eiler_res;
-  unsigned long long int d, n;
+  unsigned long long int d = 0, n;
   int fd_public, fd_private;
   FILE* in_file = fopen(input_file, "rb");
 
@@ -45,19 +45,28 @@ int RSA_sgn(char* input_file)
   }
   unsigned long long int gcd = 0;
   unsigned long long int euclid_res[3];
-  while (gcd != 1 || test_prime_num(d) == 0 || d > 0xFFFF) {
-    do {
-      generate_prime_number(1, 100000, &p);
-      generate_prime_number(1, 100000, &q);
-    } while (p == q);
-    n = p * q;
-    eiler_res = (p - 1) * (q - 1);
-    e = generate_mutually_prime_number(eiler_res, 1, eiler_res);
-    euclid(e, eiler_res, euclid_res);
-    d = euclid_res[0];
+  do {
+    generate_prime_number(1, 100000, &p);
+    generate_prime_number(1, 100000, &q);
+  } while (p == q);
+  n = p * q;
+  eiler_res = (p - 1) * (q - 1);
+
+  while (gcd != 1) {
+    generate_prime_number(1, 10000, &d);
+    euclid(d, eiler_res, euclid_res);
     gcd = euclid_res[2];
-    d = d % eiler_res;
   }
+
+  while (key_check != 1) {
+    e = rand();
+    key_check = (e*d) % eiler_res;
+  }
+//printf("key_check = %lld\n", key_check);
+//printf("gcd = %lld\n", gcd);
+//expmod_func(s, e, n, &s);
+//printf("signature = %lld\n", s);
+
   write(fd_public, &e, sizeof(e));
   write(fd_public, &n, sizeof(n));
   write(fd_private, &d, sizeof(d));
@@ -77,6 +86,6 @@ int RSA_sgn(char* input_file)
 
 long int rsa_sgn_check(char* input_file)
 {
-  
+
 }
 */
